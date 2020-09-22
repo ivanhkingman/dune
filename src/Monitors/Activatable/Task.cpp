@@ -33,7 +33,7 @@
 namespace Monitors
 {
   
-  //! Activates by default and deactivates upon receiving five announce messages.
+  //! Activates by default and deactivates upon receiving a fixed ammount of announce messages.
   
   //! @author Ivan Kingman
   namespace Activatable
@@ -65,7 +65,7 @@ namespace Monitors
         paramActive(Tasks::Parameter::SCOPE_GLOBAL,
                     Tasks::Parameter::VISIBILITY_USER,
                     true);
-        bind<IMC::Announce>(this);  // This task subscribes to announce messages
+        bind<IMC::Announce>(this); 
       }
 
       //! Update internal state with new parameter values.
@@ -115,6 +115,9 @@ namespace Monitors
       }
 
       //! Announce callback.
+      // TODO: Code refactioning to improve readability
+      // TODO: Change prints to appear on single line
+      // TODO: Change prints to avoid warnings about variable types
       void consume(const IMC::Announce* msg) {
         m_counter++;
         if (isActive()){
