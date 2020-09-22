@@ -32,9 +32,7 @@
 
 namespace Monitors
 {
-  //! Insert short task description here.
-  //!
-  //! Insert explanation on task behaviour here.
+  //! Prints warnings to verify task lifecycle for human reading the console
   //! @author Ivan Kingman
   namespace LifeCycle
   {
@@ -54,49 +52,49 @@ namespace Monitors
       void
       onUpdateParameters(void)
       {
-        war("Updated internal state with new parameter values by IVAN :)");
+        war("Updated internal state with new parameter values");
       }
 
       //! Reserve entity identifiers.
       void
       onEntityReservation(void)
       {
-        war("Reserved entity identifiers by IVAN :)");
+        war("Reserved entity identifiers");
       }
 
       //! Resolve entity names.
       void
       onEntityResolution(void)
       {
-        war("Resolved entity names by IVAN :)");
+        war("Resolved entity names");
       }
 
       //! Acquire resources.
       void
       onResourceAcquisition(void)
       {
-        war("Acquired resources by IVAN :)");
+        war("Acquired resources");
       }
 
       //! Initialize resources.
       void
       onResourceInitialization(void)
       {
-        war("Initialized resources by IVAN :)");
+        war("Initialized resources");
       }
 
       //! Release resources.
       void
       onResourceRelease(void)
       {
-        war("Released resources by IVAN :)");
+        war("Released resources");
       }
 
       //! Main loop.
       void
       onMain(void)
       {
-        war("On main loop by IVAN :)");
+        war("On main loop");
         while (!stopping())
         {
           waitForMessages(1.0);
