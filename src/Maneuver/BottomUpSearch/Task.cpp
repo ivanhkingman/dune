@@ -32,7 +32,7 @@
 
 namespace Maneuver
 {
-  //! Insert short task description here.
+  //! Steers vehicle from the bottom up to the surface
   //!
   //! Insert explanation on task behaviour here.
   //! @author Ivan Kingman
@@ -48,6 +48,8 @@ namespace Maneuver
       Task(const std::string& name, Tasks::Context& ctx):
         DUNE::Tasks::Task(name, ctx)
       {
+        war("Hello World from BottomUpSearch constructor");
+        bind<IMC::CustomManeuver>(this);
       }
 
       //! Update internal state with new parameter values.
@@ -95,6 +97,38 @@ namespace Maneuver
           waitForMessages(1.0);
         }
       }
+
+      //! Respond to custom maneuver message
+      void consume(const IMC::CustomManeuver* msg) {
+        war("Recieved Custom maneuver: "); war(msg->name.c_str());
+        if (msg->name == "BottomUpSearch") {
+
+          // Todo: Make method of this called: Generate goTo-message:
+          // Note to self: This message is just an example, fields should be filled in according to fields of custom message
+          IMC::Goto goTo;
+          goTo.setDestination(30);
+          goTo.setDestinationEntity(255);
+          goTo.timeout = 1000;
+          goTo.lat = 0.72;
+          goTo.lon = -0.15;
+          goTo.z = 2;
+          goTo.z_units = 1; // depth [m]
+          goTo.roll = -1; goTo.pitch = -1; goTo.yaw = -1;
+          goTo.speed = 1000;
+          goTo.speed_units = 1;
+
+          dispatch(goTo);
+          // Wait until goto succeeds: Monitor? ReturnMessage from Goto?
+          
+          // Disable motor
+          // While depth less than threshold
+            // Maximize pitch,
+            // Minimize velocity
+          // When threshold reached, maneuver is over
+
+        }
+      }
+
     };
   }
 }
