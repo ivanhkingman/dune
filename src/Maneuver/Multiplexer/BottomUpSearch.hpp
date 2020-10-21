@@ -65,7 +65,7 @@ namespace Maneuver
       void
       onStart(const IMC::BottomUpSearch* maneuver)
       { 
-        m_task->inf(DTR("Started BottomUpSearchManeuver"));
+        //m_task->inf(DTR("Started BottomUpSearchManeuver"));
         m_task->setControl(IMC::CL_PATH);
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
@@ -76,9 +76,6 @@ namespace Maneuver
         path.speed_units = maneuver->speed_units;
 
         m_task->dispatch(path);
-        
-        
-        
       }
 
       //! On PathControlState message
@@ -88,9 +85,10 @@ namespace Maneuver
       {
         if (pcs->flags & IMC::PathControlState::FL_NEAR)
         {
-          m_task->inf(DTR("Reached Goto"));
+          //m_task->inf(DTR("Reached Goto"));
+          m_task->signalCompletion();
           setState(ST_TRANSITIONING);
-          floatToSurface();
+          //floatToSurface();
         }
         else
           m_task->signalProgress(pcs->eta); // Todo: Problem here is that the task eta is given by the goto eta, which is not true
@@ -98,6 +96,8 @@ namespace Maneuver
 
       //! On EstimatedState message
       //! @param[in] estate pointer to EstimatedState message
+
+      /*
       void
       onEstimatedState(const IMC::EstimatedState *msg)
       {
@@ -124,6 +124,7 @@ namespace Maneuver
             break;
         }
       }
+      */
 
       ~BottomUpSearch(void)
       {
