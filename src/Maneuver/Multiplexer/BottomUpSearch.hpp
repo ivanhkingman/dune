@@ -67,15 +67,6 @@ namespace Maneuver
       { 
         
         m_task->inf(DTR("Started BottomUpSearchManeuver"));
-        m_task->setControl(IMC::CL_SPEED);
-        m_task->setControl(IMC::CL_PITCH);
-      
-
-        IMC::DesiredSpeed ds;
-        ds.value = 0;
-        ds.speed_units = IMC::SUNITS_RPM;
-        m_task->dispatch(ds);
-        
         
         m_task->setControl(IMC::CL_PATH);
         IMC::DesiredPath path;
