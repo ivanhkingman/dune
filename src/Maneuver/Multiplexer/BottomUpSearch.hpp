@@ -65,9 +65,7 @@ namespace Maneuver
       void
       onStart(const IMC::BottomUpSearch* maneuver)
       { 
-        
         m_task->inf(DTR("Started BottomUpSearchManeuver"));
-        
         m_task->setControl(IMC::CL_PATH);
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
