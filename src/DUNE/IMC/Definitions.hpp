@@ -28,7 +28,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: c49b27aa4bcdc6ad012fe602fbe29bb8                            *
+// IMC XML MD5: 7ba846541eecaf7a7244da3370b23673                            *
 //***************************************************************************
 
 #ifndef DUNE_IMC_DEFINITIONS_HPP_INCLUDED_
@@ -16800,6 +16800,93 @@ namespace DUNE
       fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
     };
 
+    //! Bottom Up Search.
+    class BottomUpSearch: public Maneuver
+    {
+    public:
+      //! Timeout.
+      uint16_t timeout;
+      //! Latitude WGS-84.
+      fp64_t lat;
+      //! Longitude WGS-84.
+      fp64_t lon;
+      //! Z Reference.
+      fp32_t z;
+      //! Z Units.
+      uint8_t z_units;
+      //! Speed.
+      fp32_t speed;
+      //! Speed Units.
+      uint8_t speed_units;
+      //! Roll.
+      fp64_t roll;
+      //! Pitch.
+      fp64_t pitch;
+      //! Yaw.
+      fp64_t yaw;
+      //! Custom settings for maneuver.
+      std::string custom;
+
+      static uint16_t
+      getIdStatic(void)
+      {
+        return 497;
+      }
+
+      BottomUpSearch(void);
+
+      BottomUpSearch*
+      clone(void) const
+      {
+        return new BottomUpSearch(*this);
+      }
+
+      void
+      clear(void);
+
+      bool
+      fieldsEqual(const Message& msg__) const;
+
+      int
+      validate(void) const;
+
+      uint8_t*
+      serializeFields(uint8_t* bfr__) const;
+
+      uint16_t
+      deserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      getId(void) const
+      {
+        return BottomUpSearch::getIdStatic();
+      }
+
+      const char*
+      getName(void) const
+      {
+        return "BottomUpSearch";
+      }
+
+      unsigned
+      getFixedSerializationSize(void) const
+      {
+        return 52;
+      }
+
+      unsigned
+      getVariableSerializationSize(void) const
+      {
+        return IMC::getSerializationSize(custom);
+      }
+
+      void
+      fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
+    };
+
     //! Magnetometer Maneuver.
     class Magnetometer: public Maneuver
     {
@@ -23135,6 +23222,77 @@ namespace DUNE
 
       void
       setValueFP(fp64_t val);
+
+      void
+      fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
+    };
+
+    //! UamTxRange.
+    class UamTxRange: public Message
+    {
+    public:
+      //! Sequence Id.
+      uint16_t seq;
+      //! Destination System.
+      std::string sys_dst;
+      //! Timeout.
+      fp32_t timeout;
+
+      static uint16_t
+      getIdStatic(void)
+      {
+        return 818;
+      }
+
+      UamTxRange(void);
+
+      UamTxRange*
+      clone(void) const
+      {
+        return new UamTxRange(*this);
+      }
+
+      void
+      clear(void);
+
+      bool
+      fieldsEqual(const Message& msg__) const;
+
+      int
+      validate(void) const;
+
+      uint8_t*
+      serializeFields(uint8_t* bfr__) const;
+
+      uint16_t
+      deserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__);
+
+      uint16_t
+      getId(void) const
+      {
+        return UamTxRange::getIdStatic();
+      }
+
+      const char*
+      getName(void) const
+      {
+        return "UamTxRange";
+      }
+
+      unsigned
+      getFixedSerializationSize(void) const
+      {
+        return 6;
+      }
+
+      unsigned
+      getVariableSerializationSize(void) const
+      {
+        return IMC::getSerializationSize(sys_dst);
+      }
 
       void
       fieldsToJSON(std::ostream& os__, unsigned nindent__) const;

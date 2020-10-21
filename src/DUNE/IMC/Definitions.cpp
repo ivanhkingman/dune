@@ -28,7 +28,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: c49b27aa4bcdc6ad012fe602fbe29bb8                            *
+// IMC XML MD5: 7ba846541eecaf7a7244da3370b23673                            *
 //***************************************************************************
 
 // ISO C++ 98 headers.
@@ -18027,6 +18027,127 @@ namespace DUNE
       IMC::toJSON(os__, "custom", custom, nindent__);
     }
 
+    BottomUpSearch::BottomUpSearch(void)
+    {
+      m_header.mgid = 497;
+      clear();
+    }
+
+    void
+    BottomUpSearch::clear(void)
+    {
+      timeout = 0;
+      lat = 0;
+      lon = 0;
+      z = 0;
+      z_units = 0;
+      speed = 0;
+      speed_units = 0;
+      roll = 0;
+      pitch = 0;
+      yaw = 0;
+      custom.clear();
+    }
+
+    bool
+    BottomUpSearch::fieldsEqual(const Message& msg__) const
+    {
+      const IMC::BottomUpSearch& other__ = static_cast<const BottomUpSearch&>(msg__);
+      if (timeout != other__.timeout) return false;
+      if (lat != other__.lat) return false;
+      if (lon != other__.lon) return false;
+      if (z != other__.z) return false;
+      if (z_units != other__.z_units) return false;
+      if (speed != other__.speed) return false;
+      if (speed_units != other__.speed_units) return false;
+      if (roll != other__.roll) return false;
+      if (pitch != other__.pitch) return false;
+      if (yaw != other__.yaw) return false;
+      if (custom != other__.custom) return false;
+      return true;
+    }
+
+    int
+    BottomUpSearch::validate(void) const
+    {
+      if (lat < -1.5707963267948966 || lat > 1.5707963267948966) return false;
+      if (lon < -3.141592653589793 || lon > 3.141592653589793) return false;
+      if (roll < -1 || roll > 6.283185307179586) return false;
+      if (pitch < -1 || pitch > 6.283185307179586) return false;
+      if (yaw < -1 || yaw > 6.283185307179586) return false;
+      return true;
+    }
+
+    uint8_t*
+    BottomUpSearch::serializeFields(uint8_t* bfr__) const
+    {
+      uint8_t* ptr__ = bfr__;
+      ptr__ += IMC::serialize(timeout, ptr__);
+      ptr__ += IMC::serialize(lat, ptr__);
+      ptr__ += IMC::serialize(lon, ptr__);
+      ptr__ += IMC::serialize(z, ptr__);
+      ptr__ += IMC::serialize(z_units, ptr__);
+      ptr__ += IMC::serialize(speed, ptr__);
+      ptr__ += IMC::serialize(speed_units, ptr__);
+      ptr__ += IMC::serialize(roll, ptr__);
+      ptr__ += IMC::serialize(pitch, ptr__);
+      ptr__ += IMC::serialize(yaw, ptr__);
+      ptr__ += IMC::serialize(custom, ptr__);
+      return ptr__;
+    }
+
+    uint16_t
+    BottomUpSearch::deserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::deserialize(timeout, bfr__, size__);
+      bfr__ += IMC::deserialize(lat, bfr__, size__);
+      bfr__ += IMC::deserialize(lon, bfr__, size__);
+      bfr__ += IMC::deserialize(z, bfr__, size__);
+      bfr__ += IMC::deserialize(z_units, bfr__, size__);
+      bfr__ += IMC::deserialize(speed, bfr__, size__);
+      bfr__ += IMC::deserialize(speed_units, bfr__, size__);
+      bfr__ += IMC::deserialize(roll, bfr__, size__);
+      bfr__ += IMC::deserialize(pitch, bfr__, size__);
+      bfr__ += IMC::deserialize(yaw, bfr__, size__);
+      bfr__ += IMC::deserialize(custom, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    uint16_t
+    BottomUpSearch::reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::reverseDeserialize(timeout, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(lat, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(lon, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(z, bfr__, size__);
+      bfr__ += IMC::deserialize(z_units, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(speed, bfr__, size__);
+      bfr__ += IMC::deserialize(speed_units, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(roll, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(pitch, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(yaw, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(custom, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    void
+    BottomUpSearch::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
+    {
+      IMC::toJSON(os__, "timeout", timeout, nindent__);
+      IMC::toJSON(os__, "lat", lat, nindent__);
+      IMC::toJSON(os__, "lon", lon, nindent__);
+      IMC::toJSON(os__, "z", z, nindent__);
+      IMC::toJSON(os__, "z_units", z_units, nindent__);
+      IMC::toJSON(os__, "speed", speed, nindent__);
+      IMC::toJSON(os__, "speed_units", speed_units, nindent__);
+      IMC::toJSON(os__, "roll", roll, nindent__);
+      IMC::toJSON(os__, "pitch", pitch, nindent__);
+      IMC::toJSON(os__, "yaw", yaw, nindent__);
+      IMC::toJSON(os__, "custom", custom, nindent__);
+    }
+
     Magnetometer::Magnetometer(void)
     {
       m_header.mgid = 499;
@@ -24421,6 +24542,74 @@ namespace DUNE
       IMC::toJSON(os__, "seq", seq, nindent__);
       IMC::toJSON(os__, "sys", sys, nindent__);
       IMC::toJSON(os__, "value", value, nindent__);
+    }
+
+    UamTxRange::UamTxRange(void)
+    {
+      m_header.mgid = 818;
+      clear();
+    }
+
+    void
+    UamTxRange::clear(void)
+    {
+      seq = 0;
+      sys_dst.clear();
+      timeout = 0;
+    }
+
+    bool
+    UamTxRange::fieldsEqual(const Message& msg__) const
+    {
+      const IMC::UamTxRange& other__ = static_cast<const UamTxRange&>(msg__);
+      if (seq != other__.seq) return false;
+      if (sys_dst != other__.sys_dst) return false;
+      if (timeout != other__.timeout) return false;
+      return true;
+    }
+
+    int
+    UamTxRange::validate(void) const
+    {
+      return true;
+    }
+
+    uint8_t*
+    UamTxRange::serializeFields(uint8_t* bfr__) const
+    {
+      uint8_t* ptr__ = bfr__;
+      ptr__ += IMC::serialize(seq, ptr__);
+      ptr__ += IMC::serialize(sys_dst, ptr__);
+      ptr__ += IMC::serialize(timeout, ptr__);
+      return ptr__;
+    }
+
+    uint16_t
+    UamTxRange::deserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::deserialize(seq, bfr__, size__);
+      bfr__ += IMC::deserialize(sys_dst, bfr__, size__);
+      bfr__ += IMC::deserialize(timeout, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    uint16_t
+    UamTxRange::reverseDeserializeFields(const uint8_t* bfr__, uint16_t size__)
+    {
+      const uint8_t* start__ = bfr__;
+      bfr__ += IMC::reverseDeserialize(seq, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(sys_dst, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(timeout, bfr__, size__);
+      return bfr__ - start__;
+    }
+
+    void
+    UamTxRange::fieldsToJSON(std::ostream& os__, unsigned nindent__) const
+    {
+      IMC::toJSON(os__, "seq", seq, nindent__);
+      IMC::toJSON(os__, "sys_dst", sys_dst, nindent__);
+      IMC::toJSON(os__, "timeout", timeout, nindent__);
     }
 
     FormCtrlParam::FormCtrlParam(void)

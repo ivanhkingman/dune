@@ -28,8 +28,8 @@
 // Author: Eduardo Marques (original maneuver implementation)               *
 //***************************************************************************
 
-#ifndef MANEUVER_MULTIPLEXER_GOTO_HPP_INCLUDED_
-#define MANEUVER_MULTIPLEXER_GOTO_HPP_INCLUDED_
+#ifndef MANEUVER_MULTIPLEXER_BOTTOMUPSEARCH_HPP_INCLUDED_
+#define MANEUVER_MULTIPLEXER_BOTTOMUPSEARCH_HPP_INCLUDED_
 
 #include <DUNE/DUNE.hpp>
 
@@ -42,21 +42,41 @@ namespace Maneuver
   {
     using DUNE_NAMESPACES;
 
-    //! Goto maneuver
-    class Goto: public MuxedManeuver<IMC::Goto, void>
+    struct BottomUpSearchArgs 
+    {
+      //! Depth threshold to be considered surface
+      float depth_threshold;
+    };
+
+    //! BottomUpSearch maneuver
+    class BottomUpSearch: public MuxedManeuver<IMC::BottomUpSearch, BottomUpSearchArgs>
     {
     public:
       //! Default constructor.
       //! @param[in] task pointer to Maneuver task
-      Goto(Maneuvers::Maneuver* task):
-        MuxedManeuver<IMC::Goto, void>(task)
+      //! @param[in] args pointer to Maneuver's arguments
+      BottomUpSearch(Maneuvers::Maneuver* task, BottomUpSearchArgs* args):
+        MuxedManeuver<IMC::BottomUpSearch, BottomUpSearchArgs>(task, args),
+        m_state(ST_START) 
       { }
 
       //! Start maneuver function
-      //! @param[in] maneuver goto maneuver message
+      //! @param[in] maneuver BottomUpSearch maneuver message
       void
-      onStart(const IMC::Goto* maneuver)
-      {
+      onStart(const IMC::BottomUpSearch* maneuver)
+      { 
+        
+        m_task->inf(DTR("Started BottomUpSearchManeuver"));
+        m_task->setControl(IMC::CL_SPEED);
+        m_task->setControl(IMC::CL_PITCH);
+      
+
+        IMC::DesiredSpeed ds;
+        ds.value = 0;
+        ds.speed_units = IMC::SUNITS_RPM;
+        m_task->dispatch(ds);
+        
+        
         m_task->setControl(IMC::CL_PATH);
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
@@ -67,6 +87,9 @@ namespace Maneuver
         path.speed_units = maneuver->speed_units;
 
         m_task->dispatch(path);
+        
+        
+        
       }
 
       //! On PathControlState message
@@ -75,13 +98,87 @@ namespace Maneuver
       onPathControlState(const IMC::PathControlState* pcs)
       {
         if (pcs->flags & IMC::PathControlState::FL_NEAR)
-          m_task->signalCompletion();
+        {
+          m_task->inf(DTR("Reached Goto"));
+          setState(ST_TRANSITIONING);
+          floatToSurface();
+        }
         else
-          m_task->signalProgress(pcs->eta);
+          m_task->signalProgress(pcs->eta); // Todo: Problem here is that the task eta is given by the goto eta, which is not true
       }
 
-      ~Goto(void)
-      { }
+      //! On EstimatedState message
+      //! @param[in] estate pointer to EstimatedState message
+      void
+      onEstimatedState(const IMC::EstimatedState *msg)
+      {
+        m_estate = *msg;
+        switch(m_state)
+        {
+          case ST_FLOATING: {
+            m_task->inf(DTR("Floating..."));
+            std::string pitchString = std::to_string(m_estate.theta);
+            const char *c = pitchString.c_str();
+            m_task->inf(DTR(c));}
+            if (m_estate.z < m_args->depth_threshold) {
+              m_task->inf(DTR("Reached Surface"));
+              setState(ST_DONE);
+              m_task->signalCompletion();
+              }
+            if (m_estate.theta > -5) {
+              m_task->inf(DTR("Pitch too high. Enabling thrust."));
+              IMC::DesiredPitch dp;
+              dp.value = -1;
+            }
+            break;
+          default:
+            break;
+        }
+      }
+
+      ~BottomUpSearch(void)
+      {
+        m_task->inf(DTR("BottomUpSearch destructor called"));
+       }
+
+    private:
+      enum State
+      {
+        //! Starting state
+        ST_START,
+        //! Going to waypoint
+        ST_GOTO,
+        //! Floating up to surface
+        ST_FLOATING,
+        //! When transitioning between states
+        ST_TRANSITIONING,
+        //! Done state
+        ST_DONE
+      };
+
+    //! Go to state
+    //! @param[in] state transition to this state
+    void
+    setState(State state)
+    {
+        m_state = state;
+    }
+
+    //! Start floating to the surface
+    void
+    floatToSurface(void) {
+      m_task->inf(DTR("Floating To Surface"));
+      IMC::DesiredSpeed ds;
+      ds.value = 0;
+      ds.speed_units = IMC::SUNITS_RPM;
+      m_task->dispatch(ds);
+    }
+
+    //! State of state machine
+    State m_state;
+    //! EstimatedState data
+    IMC::EstimatedState m_estate;
+
     };
   }
 }
