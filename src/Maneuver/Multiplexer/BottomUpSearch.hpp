@@ -32,6 +32,8 @@
 #define MANEUVER_MULTIPLEXER_BOTTOMUPSEARCH_HPP_INCLUDED_
 
 #include <DUNE/DUNE.hpp>
+#include <iostream> //TODO: REMOVE
+
 
 // Local headers
 #include "MuxedManeuver.hpp"
@@ -65,7 +67,7 @@ namespace Maneuver
       void
       onStart(const IMC::BottomUpSearch* maneuver)
       { 
-        //m_task->inf(DTR("Started BottomUpSearchManeuver"));
+        m_task->inf(DTR("Started bottomUpSearch")); // This line never prints :(
         m_task->setControl(IMC::CL_PATH);
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
@@ -74,7 +76,6 @@ namespace Maneuver
         path.end_z_units = maneuver->z_units;
         path.speed = maneuver->speed;
         path.speed_units = maneuver->speed_units;
-
         m_task->dispatch(path);
       }
 
@@ -86,7 +87,8 @@ namespace Maneuver
         if (pcs->flags & IMC::PathControlState::FL_NEAR)
         {
           //m_task->inf(DTR("Reached Goto"));
-          m_task->signalCompletion();
+          std::cout << "Reached Goto" << std::endl;
+          // m_task->signalCompletion();
           setState(ST_TRANSITIONING);
           //floatToSurface();
         }

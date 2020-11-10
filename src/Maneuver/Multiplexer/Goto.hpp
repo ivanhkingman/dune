@@ -32,7 +32,7 @@
 #define MANEUVER_MULTIPLEXER_GOTO_HPP_INCLUDED_
 
 #include <DUNE/DUNE.hpp>
-
+ 
 // Local headers
 #include "MuxedManeuver.hpp"
 

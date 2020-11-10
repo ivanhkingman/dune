@@ -24,7 +24,7 @@
 // https://github.com/LSTS/dune/blob/master/LICENCE.md and                  *
 // http://ec.europa.eu/idabc/eupl.html.                                     *
 //***************************************************************************
-// Author: Ivan Kingman                                                     *
+//                                                                          *
 // Author: Pedro Calado                                                     *
 // Author: Eduardo Marques (original maneuver implementation)               *
 //***************************************************************************
@@ -327,7 +327,9 @@ namespace Maneuver
         .defaultValue("10.0")
         .description("Minimum radius for StationKeepingExtended to prevent incompatibility with path controller");
 
-        //param("BottomUpSearch -- ")
+        param("BottomUpSearch -- Depth Threshold", m_args.bottomUpSearch.depth_threshold)
+        .defaultValue("1")
+        .description("Minimum depth for considering the surface to be reached");
 
         m_ctx.config.get("General", "Underwater Depth Threshold", "0.3", m_args.dislodge.depth_threshold);
 
@@ -466,7 +468,6 @@ namespace Maneuver
           signalError(DTR("wrong maneuver type"));
           return;
         }
-
         m_maneuvers[m_type]->start(maneuver);
       }
 
