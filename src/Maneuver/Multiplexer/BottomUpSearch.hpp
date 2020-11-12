@@ -76,6 +76,7 @@ namespace Maneuver
         path.end_z_units = maneuver->z_units;
         path.speed = maneuver->speed;
         path.speed_units = maneuver->speed_units;
+        
         m_task->dispatch(path);
       }
 
@@ -88,8 +89,8 @@ namespace Maneuver
         {
           //m_task->inf(DTR("Reached Goto"));
           std::cout << "Reached Goto" << std::endl;
-          // m_task->signalCompletion();
-          setState(ST_TRANSITIONING);
+          m_task->signalCompletion();
+          // setState(ST_TRANSITIONING);
           //floatToSurface();
         }
         else
@@ -148,6 +149,7 @@ namespace Maneuver
         ST_DONE
       };
 
+    /*
     //! Go to state
     //! @param[in] state transition to this state
     void
@@ -174,5 +176,6 @@ namespace Maneuver
     };
   }
 }
+*/
 
 #endif
