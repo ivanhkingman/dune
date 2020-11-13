@@ -138,8 +138,6 @@ namespace Maneuver
       SampleArgs sample;
       //! StationKeepingExtended Arguments
       StationKeepingExtendedArgs skext;
-      //! BottomUpSearch Arguments
-      BottomUpSearchArgs bottomUpSearch;
     };
 
     struct Task: public DUNE::Maneuvers::Maneuver
@@ -327,10 +325,6 @@ namespace Maneuver
         .defaultValue("10.0")
         .description("Minimum radius for StationKeepingExtended to prevent incompatibility with path controller");
 
-        param("BottomUpSearch -- Depth Threshold", m_args.bottomUpSearch.depth_threshold)
-        .defaultValue("1")
-        .description("Minimum depth for considering the surface to be reached");
-
         m_ctx.config.get("General", "Underwater Depth Threshold", "0.3", m_args.dislodge.depth_threshold);
 
         m_ctx.config.get("General", "Absolute Maximum Depth", "50.0", m_args.yoyo.max_depth);
@@ -419,7 +413,7 @@ namespace Maneuver
         m_maneuvers[TYPE_DROP] = create<Drop>(&m_args.drop);
         m_maneuvers[TYPE_SAMPLE] = create<Sample>(&m_args.sample);
         m_maneuvers[TYPE_SKEEPEXT] = create<StationKeepingExtended>(&m_args.skext);
-        m_maneuvers[TYPE_BOTTOMUPSEARCH] = create<BottomUpSearch>(&m_args.bottomUpSearch); // Added by Ivan
+        m_maneuvers[TYPE_BOTTOMUPSEARCH] = create<BottomUpSearch>(); // Added by Ivan
       }
 
       void

@@ -28,7 +28,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: ebd615ab4b129fe913b51419fc76c3d2                            *
+// IMC XML MD5: ea521376f44f776f843b4b5374c01b9a                            *
 //***************************************************************************
 
 // ISO C++ 98 headers.
@@ -18046,9 +18046,8 @@ namespace DUNE
       roll = 0;
       pitch = 0;
       yaw = 0;
-      pitch_thresh = 0;
-      rpm = 0;
-      thrust_duration = 0;
+      desired_pitch = 0;
+      surface_threshold = 0;
       custom.clear();
     }
 
@@ -18066,9 +18065,8 @@ namespace DUNE
       if (roll != other__.roll) return false;
       if (pitch != other__.pitch) return false;
       if (yaw != other__.yaw) return false;
-      if (pitch_thresh != other__.pitch_thresh) return false;
-      if (rpm != other__.rpm) return false;
-      if (thrust_duration != other__.thrust_duration) return false;
+      if (desired_pitch != other__.desired_pitch) return false;
+      if (surface_threshold != other__.surface_threshold) return false;
       if (custom != other__.custom) return false;
       return true;
     }
@@ -18081,7 +18079,7 @@ namespace DUNE
       if (roll < -1 || roll > 6.283185307179586) return false;
       if (pitch < -1 || pitch > 6.283185307179586) return false;
       if (yaw < -1 || yaw > 6.283185307179586) return false;
-      if (pitch_thresh < -1 || pitch_thresh > 6.283185307179586) return false;
+      if (desired_pitch < -1 || desired_pitch > 6.283185307179586) return false;
       return true;
     }
 
@@ -18099,9 +18097,8 @@ namespace DUNE
       ptr__ += IMC::serialize(roll, ptr__);
       ptr__ += IMC::serialize(pitch, ptr__);
       ptr__ += IMC::serialize(yaw, ptr__);
-      ptr__ += IMC::serialize(pitch_thresh, ptr__);
-      ptr__ += IMC::serialize(rpm, ptr__);
-      ptr__ += IMC::serialize(thrust_duration, ptr__);
+      ptr__ += IMC::serialize(desired_pitch, ptr__);
+      ptr__ += IMC::serialize(surface_threshold, ptr__);
       ptr__ += IMC::serialize(custom, ptr__);
       return ptr__;
     }
@@ -18120,9 +18117,8 @@ namespace DUNE
       bfr__ += IMC::deserialize(roll, bfr__, size__);
       bfr__ += IMC::deserialize(pitch, bfr__, size__);
       bfr__ += IMC::deserialize(yaw, bfr__, size__);
-      bfr__ += IMC::deserialize(pitch_thresh, bfr__, size__);
-      bfr__ += IMC::deserialize(rpm, bfr__, size__);
-      bfr__ += IMC::deserialize(thrust_duration, bfr__, size__);
+      bfr__ += IMC::deserialize(desired_pitch, bfr__, size__);
+      bfr__ += IMC::deserialize(surface_threshold, bfr__, size__);
       bfr__ += IMC::deserialize(custom, bfr__, size__);
       return bfr__ - start__;
     }
@@ -18141,9 +18137,8 @@ namespace DUNE
       bfr__ += IMC::reverseDeserialize(roll, bfr__, size__);
       bfr__ += IMC::reverseDeserialize(pitch, bfr__, size__);
       bfr__ += IMC::reverseDeserialize(yaw, bfr__, size__);
-      bfr__ += IMC::reverseDeserialize(pitch_thresh, bfr__, size__);
-      bfr__ += IMC::reverseDeserialize(rpm, bfr__, size__);
-      bfr__ += IMC::reverseDeserialize(thrust_duration, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(desired_pitch, bfr__, size__);
+      bfr__ += IMC::reverseDeserialize(surface_threshold, bfr__, size__);
       bfr__ += IMC::reverseDeserialize(custom, bfr__, size__);
       return bfr__ - start__;
     }
@@ -18161,9 +18156,8 @@ namespace DUNE
       IMC::toJSON(os__, "roll", roll, nindent__);
       IMC::toJSON(os__, "pitch", pitch, nindent__);
       IMC::toJSON(os__, "yaw", yaw, nindent__);
-      IMC::toJSON(os__, "pitch_thresh", pitch_thresh, nindent__);
-      IMC::toJSON(os__, "rpm", rpm, nindent__);
-      IMC::toJSON(os__, "thrust_duration", thrust_duration, nindent__);
+      IMC::toJSON(os__, "desired_pitch", desired_pitch, nindent__);
+      IMC::toJSON(os__, "surface_threshold", surface_threshold, nindent__);
       IMC::toJSON(os__, "custom", custom, nindent__);
     }
 

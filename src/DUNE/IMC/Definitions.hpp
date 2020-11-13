@@ -28,7 +28,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: ebd615ab4b129fe913b51419fc76c3d2                            *
+// IMC XML MD5: ea521376f44f776f843b4b5374c01b9a                            *
 //***************************************************************************
 
 #ifndef DUNE_IMC_DEFINITIONS_HPP_INCLUDED_
@@ -16800,7 +16800,7 @@ namespace DUNE
       fieldsToJSON(std::ostream& os__, unsigned nindent__) const;
     };
 
-    //! Bottom Up Search.
+    //! Bottom Up Search Maneuver.
     class BottomUpSearch: public Maneuver
     {
     public:
@@ -16824,12 +16824,10 @@ namespace DUNE
       fp64_t pitch;
       //! Yaw.
       fp64_t yaw;
-      //! Pitch Threshold.
-      fp64_t pitch_thresh;
-      //! RPM.
-      fp32_t rpm;
-      //! Thrust Duration.
-      uint16_t thrust_duration;
+      //! Desired Pitch.
+      fp64_t desired_pitch;
+      //! Surface Threshold.
+      fp32_t surface_threshold;
       //! Custom settings for maneuver.
       std::string custom;
 
@@ -16880,7 +16878,7 @@ namespace DUNE
       unsigned
       getFixedSerializationSize(void) const
       {
-        return 66;
+        return 64;
       }
 
       unsigned

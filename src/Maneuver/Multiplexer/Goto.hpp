@@ -32,7 +32,7 @@
 #define MANEUVER_MULTIPLEXER_GOTO_HPP_INCLUDED_
 
 #include <DUNE/DUNE.hpp>
- 
+
 // Local headers
 #include "MuxedManeuver.hpp"
 
@@ -58,6 +58,7 @@ namespace Maneuver
       onStart(const IMC::Goto* maneuver)
       {
         m_task->setControl(IMC::CL_PATH);
+
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
         path.end_lon = maneuver->lon;

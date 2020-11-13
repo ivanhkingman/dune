@@ -44,30 +44,29 @@ namespace Maneuver
   {
     using DUNE_NAMESPACES;
 
-    struct BottomUpSearchArgs 
-    {
-      //! Depth threshold to be considered surface
-      float depth_threshold;
-    };
-
     //! BottomUpSearch maneuver
-    class BottomUpSearch: public MuxedManeuver<IMC::BottomUpSearch, BottomUpSearchArgs>
+    class BottomUpSearch: public MuxedManeuver<IMC::BottomUpSearch, void>
     {
     public:
-      //! Default constructor.
+       //! Default constructor.
       //! @param[in] task pointer to Maneuver task
       //! @param[in] args pointer to Maneuver's arguments
-      BottomUpSearch(Maneuvers::Maneuver* task, BottomUpSearchArgs* args):
-        MuxedManeuver<IMC::BottomUpSearch, BottomUpSearchArgs>(task, args),
-        m_state(ST_START) 
+      BottomUpSearch(Maneuvers::Maneuver* task):
+        MuxedManeuver<IMC::BottomUpSearch, void>(task),
+        m_state(ST_STARTING)
       { }
 
       //! Start maneuver function
-      //! @param[in] maneuver BottomUpSearch maneuver message
+      //! @param[in] maneuver goto maneuver message
       void
       onStart(const IMC::BottomUpSearch* maneuver)
       { 
-        m_task->inf(DTR("Started bottomUpSearch")); // This line never prints :(
+        m_state = ST_STARTING;
+        m_task->inf(DTR("Started bottomUpSearch"));
+
+        m_desired_pitch = maneuver->desired_pitch;
+        m_surface_threshold = maneuver->surface_threshold;
+
         m_task->setControl(IMC::CL_PATH);
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
@@ -76,8 +75,10 @@ namespace Maneuver
         path.end_z_units = maneuver->z_units;
         path.speed = maneuver->speed;
         path.speed_units = maneuver->speed_units;
-        
+
+        m_state = ST_GOTO;
         m_task->dispatch(path);
+                
       }
 
       //! On PathControlState message
@@ -85,97 +86,86 @@ namespace Maneuver
       void
       onPathControlState(const IMC::PathControlState* pcs)
       {
-        if (pcs->flags & IMC::PathControlState::FL_NEAR)
-        {
-          //m_task->inf(DTR("Reached Goto"));
-          std::cout << "Reached Goto" << std::endl;
-          m_task->signalCompletion();
-          // setState(ST_TRANSITIONING);
-          //floatToSurface();
+        if (pcs->flags & IMC::PathControlState::FL_NEAR) {
+          m_task->inf(DTR("Reached goto"));
+          m_task->setControl(0);
+          if (m_state != ST_FLOATING) {
+            floatToSurface();
+          }
         }
         else
-          m_task->signalProgress(pcs->eta); // Todo: Problem here is that the task eta is given by the goto eta, which is not true
+          m_task->signalProgress(pcs->eta);
       }
 
-      //! On EstimatedState message
-      //! @param[in] estate pointer to EstimatedState message
 
-      /*
+      // Remove below ---
+      //! On EstimatedState message
+      //! @param[in] estate pointer to EstimatedState message 
       void
       onEstimatedState(const IMC::EstimatedState *msg)
       {
         m_estate = *msg;
-        switch(m_state)
-        {
-          case ST_FLOATING: {
-            m_task->inf(DTR("Floating..."));
-            std::string pitchString = std::to_string(m_estate.theta);
-            const char *c = pitchString.c_str();
-            m_task->inf(DTR(c));}
-            if (m_estate.z < m_args->depth_threshold) {
-              m_task->inf(DTR("Reached Surface"));
-              setState(ST_DONE);
-              m_task->signalCompletion();
-              }
-            if (m_estate.theta > -5) {
-              m_task->inf(DTR("Pitch too high. Enabling thrust."));
-              IMC::DesiredPitch dp;
-              dp.value = -1;
+
+        if (m_state == ST_FLOATING) {
+          if (-1*(m_estate.z) < m_surface_threshold) {
+            m_task->inf(DTR("Reached Surface"));
+            m_state = ST_DONE;
+            m_task->setControl(0);
+            m_task->signalCompletion();
             }
-            break;
-          default:
-            break;
         }
+        return; 
       }
-      */
+    
 
       ~BottomUpSearch(void)
-      {
-        m_task->inf(DTR("BottomUpSearch destructor called"));
-       }
+      { }
 
-    private:
-      enum State
-      {
-        //! Starting state
-        ST_START,
-        //! Going to waypoint
-        ST_GOTO,
-        //! Floating up to surface
-        ST_FLOATING,
-        //! When transitioning between states
-        ST_TRANSITIONING,
-        //! Done state
-        ST_DONE
-      };
+      private:
+        enum State
+        {
+          //! Starting state
+          ST_STARTING,
+          //! Going to waypoint
+          ST_GOTO,
+          //! Floating up to surface
+          ST_FLOATING,
+          //! Done state
+          ST_DONE
+        };   
 
-    /*
-    //! Go to state
-    //! @param[in] state transition to this state
-    void
-    setState(State state)
-    {
-        m_state = state;
-    }
 
-    //! Start floating to the surface
-    void
-    floatToSurface(void) {
-      m_task->inf(DTR("Floating To Surface"));
-      IMC::DesiredSpeed ds;
-      ds.value = 0;
-      ds.speed_units = IMC::SUNITS_RPM;
-      m_task->dispatch(ds);
-    }
+      //! Start floating to the surface
+      void
+      floatToSurface(void) {
+        m_task->inf(DTR("Floating To Surface"));
+        m_state = ST_FLOATING;
+        if (m_desired_pitch != -1) {
+          IMC::DesiredPitch dp;
+          IMC::DesiredHeading dh;
+          dp.value = 0; // Make the AUV point straight up
+          dh.value = m_estate.psi;
+          m_task->setControl(IMC::CL_YAW);
+          m_task->setControl(IMC::CL_PITCH);
+          m_task->dispatch(dh);
+          m_task->dispatch(dp);
+          m_task->inf(DTR("Enabling pitch control"));
+        } else {
+            m_task->inf(DTR("No pitch control during floating"));
+        }
+      }
 
-    //! State of state machine
-    State m_state;
-    //! EstimatedState data
-    IMC::EstimatedState m_estate;
+      //! State of state machine
+      State m_state;
+      //! EstimatedState data
+      IMC::EstimatedState m_estate;
+      //! Depth to be considered surface
+      fp64_t m_surface_threshold;
+      //! Desired pitch for the pitch control loop during float-stage
+      fp64_t m_desired_pitch;
 
-    };
-  }
-}
-*/
+    }; // Ends class
+  } // End Multiplexer namespace
+} // End Maneuver namespace
 
 #endif
