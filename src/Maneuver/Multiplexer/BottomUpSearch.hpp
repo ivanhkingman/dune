@@ -143,7 +143,7 @@ namespace Maneuver
         if (m_desired_pitch != -1) {
           IMC::DesiredPitch dp;
           IMC::DesiredHeading dh;
-          dp.value = 0; // Make the AUV point straight up
+          dp.value = m_desired_pitch;
           dh.value = m_estate.psi;
           m_task->setControl(IMC::CL_YAW);
           m_task->setControl(IMC::CL_PITCH);
