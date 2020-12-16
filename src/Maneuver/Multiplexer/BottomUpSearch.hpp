@@ -64,10 +64,14 @@ namespace Maneuver
         m_state = ST_STARTING;
         m_task->inf(DTR("Started bottomUpSearch"));
 
+        //! Get member variables from the IMC message
         m_desired_pitch = maneuver->desired_pitch;
         m_surface_threshold = maneuver->surface_threshold;
+        m_rpm = maneuver->burst_rpm;
+        m_thrust_duration = maneuver->thrust_duration;
+        m_pitch_threshold = maneuver->pitch_threshold;
 
-        m_task->setControl(IMC::CL_PATH);
+        //! Set path parameters        
         IMC::DesiredPath path;
         path.end_lat = maneuver->lat;
         path.end_lon = maneuver->lon;
@@ -76,9 +80,15 @@ namespace Maneuver
         path.speed = maneuver->speed;
         path.speed_units = maneuver->speed_units;
 
+        //! Initialize other control messages
+        m_dp.value = m_desired_pitch;
+        m_ds.value = m_rpm;
+        m_ds.speed_units = IMC::SUNITS_RPM;
+
+        //! Start the goto phase
         m_state = ST_GOTO;
-        m_task->dispatch(path);
-                
+        m_task->setControl(IMC::CL_PATH);
+        m_task->dispatch(path);      
       }
 
       //! On PathControlState message
@@ -97,23 +107,45 @@ namespace Maneuver
           m_task->signalProgress(pcs->eta);
       }
 
-
-      // Remove below ---
       //! On EstimatedState message
       //! @param[in] estate pointer to EstimatedState message 
       void
       onEstimatedState(const IMC::EstimatedState *msg)
       {
         m_estate = *msg;
-
         if (m_state == ST_FLOATING) {
+          //! Check if vehicle reached surface
           if (-1*(m_estate.z) < m_surface_threshold) {
-            m_task->inf(DTR("Reached Surface"));
             m_state = ST_DONE;
+            m_task->inf(DTR("Reached Surface"));
             m_task->setControl(0);
             m_task->signalCompletion();
             }
+          //! Check if vehicle should enable thrust
+          if (m_estate.theta < m_pitch_threshold) {
+            m_state = ST_THRUSTING;
+            m_task->inf(DTR("Started thrust"));
+            m_task->setControl(IMC::CL_SPEED);
+            m_task->dispatch(m_ds);
+            m_timer.setTop(m_thrust_duration);
+          }
         }
+
+        if (m_state == ST_THRUSTING) {
+          //! Check if vehicle should disable thrust
+          if (m_timer.overflow()) {
+            m_state = ST_FLOATING;
+            m_task->inf(DTR("Stopped thrust"));
+            IMC::DesiredHeading dh;
+            dh.value = m_estate.psi;
+            m_task->setControl(IMC::CL_YAW);
+            m_task->setControl(IMC::CL_PITCH);
+            m_task->dispatch(dh);
+            m_task->dispatch(m_dp);
+            m_timer.reset();
+          }
+        }
+
         return; 
       }
     
@@ -130,6 +162,8 @@ namespace Maneuver
           ST_GOTO,
           //! Floating up to surface
           ST_FLOATING,
+          //! Speed control
+          ST_THRUSTING,
           //! Done state
           ST_DONE
         };   
@@ -138,22 +172,29 @@ namespace Maneuver
       //! Start floating to the surface
       void
       floatToSurface(void) {
-        m_task->inf(DTR("Floating To Surface"));
         m_state = ST_FLOATING;
+        m_task->inf(DTR("Floating To Surface"));
+        m_use_thrust = true;
+        if (m_use_thrust) {
+          m_task->inf(DTR("Floating with speed control enabled"));
+        }
         if (m_desired_pitch != -1) {
-          IMC::DesiredPitch dp;
           IMC::DesiredHeading dh;
-          dp.value = m_desired_pitch;
           dh.value = m_estate.psi;
           m_task->setControl(IMC::CL_YAW);
           m_task->setControl(IMC::CL_PITCH);
           m_task->dispatch(dh);
-          m_task->dispatch(dp);
+          m_task->dispatch(m_dp);
           m_task->inf(DTR("Enabling pitch control"));
         } else {
             m_task->inf(DTR("No pitch control during floating"));
         }
       }
+
+      //! 
+      IMC::DesiredPitch m_dp;
+      IMC::DesiredHeading m_dh;
+      IMC::DesiredSpeed m_ds;
 
       //! State of state machine
       State m_state;
@@ -163,6 +204,16 @@ namespace Maneuver
       fp64_t m_surface_threshold;
       //! Desired pitch for the pitch control loop during float-stage
       fp64_t m_desired_pitch;
+      //! Flag for enabling thrust control during float-stage
+      bool m_use_thrust;
+      //! RPM-value while floating
+      float m_rpm;
+      //! Lower limit for when thrust burst should be activated
+      fp64_t m_pitch_threshold;
+      //! Thrust duration
+      uint16_t m_thrust_duration;
+      //! Timer for thrust duration
+      Time::Counter<float> m_timer;
 
     }; // Ends class
   } // End Multiplexer namespace

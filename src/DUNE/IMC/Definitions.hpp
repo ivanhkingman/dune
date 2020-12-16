@@ -28,7 +28,7 @@
 //***************************************************************************
 // Automatically generated.                                                 *
 //***************************************************************************
-// IMC XML MD5: ea521376f44f776f843b4b5374c01b9a                            *
+// IMC XML MD5: 06d0bcdb61bc5c098b62564e5a98a2a0                            *
 //***************************************************************************
 
 #ifndef DUNE_IMC_DEFINITIONS_HPP_INCLUDED_
@@ -16828,6 +16828,12 @@ namespace DUNE
       fp64_t desired_pitch;
       //! Surface Threshold.
       fp32_t surface_threshold;
+      //! Thrust Duration.
+      uint16_t thrust_duration;
+      //! Pitch Threshold.
+      fp64_t pitch_threshold;
+      //! Burst RPM.
+      fp32_t burst_rpm;
       //! Custom settings for maneuver.
       std::string custom;
 
@@ -16878,7 +16884,7 @@ namespace DUNE
       unsigned
       getFixedSerializationSize(void) const
       {
-        return 64;
+        return 78;
       }
 
       unsigned
